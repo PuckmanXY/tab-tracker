@@ -29,10 +29,11 @@ export default {
   },
   methods: {
     async register () {
-      await auth.register({
+      const response = await auth.register({
         email: this.email,
         password: this.password
       })
+      console.log(response.data)
     }
   }
 }
