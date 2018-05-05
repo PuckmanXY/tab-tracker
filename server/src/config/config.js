@@ -10,5 +10,8 @@ module.exports = {
       storage: './tabtracker.sqlite',
       operatorsAliases: false
     }
-	}
+	},
+  auth: {
+    jwtSecret: process.env.JWT_SECRET || 'secret'
+  }
 }
