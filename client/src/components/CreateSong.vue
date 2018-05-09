@@ -4,11 +4,15 @@
       <panel title="Song Metadata">
         <v-text-field
             label="Title"
+            required
+            :rules="[required]"
             v-model="song.title"
           >
         </v-text-field>
         <v-text-field
             label="Artist"
+            required
+            :rules="[required]"
             v-model="song.artist"
           >
         </v-text-field>
@@ -19,11 +23,15 @@
         </v-text-field>
         <v-text-field
             label="Album"
+            required
+            :rules="[required]"
             v-model="song.album"
           >
         </v-text-field>
         <v-text-field
             label="Album Image URL"
+            required
+            :rules="[required]"
             v-model="song.albumImageUrl"
           >
         </v-text-field>
@@ -39,11 +47,15 @@
       <panel title="Tabs and Lyrics" class="ml-2">
         <v-text-field
           label="Tab"
+          required
+          :rules="[required]"
           multi-line
           v-model="song.tab"
         ></v-text-field>
         <v-text-field
           label="Lyrics"
+          required
+          :rules="[required]"
           multi-line
           v-model="song.lyrics"
         ></v-text-field>
@@ -52,8 +64,17 @@
       <v-btn
         dark
         class="cyan"
-        @click="create"
-      >Create Song</v-btn>
+        @click="create">
+        Create Song
+      </v-btn>
+      <v-alert
+        class="ml-4"
+        :value="error"
+        transition="scale-transition"
+        type="error"
+        error>
+        {{error}}
+      </v-alert>
     </v-flex>
   </v-layout>
 </template>
@@ -69,11 +90,13 @@ export default {
         artist: null,
         genre: null,
         album: null,
-        albumImage: null,
+        albumImageUrl: null,
         youtubeId: null,
         lyrics: null,
         tab: null
-      }
+      },
+      error: null,
+      required: (value) => !!value || 'Required camp'
     }
   },
   components: {
@@ -81,11 +104,26 @@ export default {
   },
   methods: {
     async create () {
+      this.error = null
+      const areAllFieldsFilledIn = Object
+        .keys(this.song)
+        .every(key => {
+          console.log(key)
+          return !!this.song[key]
+        })
+
+      if (!areAllFieldsFilledIn) {
+        this.error = 'Please fill in all required fields'
+        return
+      }
+
+      console.log(areAllFieldsFilledIn)
+
       try {
         await SongsService.post(this.song)
-        this.$router.push({
-          name: 'songs'
-        })
+        this.$router.push(
+          {name: 'songs'}
+        )
       } catch (err) {
         console.log(err)
       }
